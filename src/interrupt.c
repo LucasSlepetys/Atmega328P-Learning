@@ -8,8 +8,6 @@
 // #include <avr/interrupt.h>
 
 // volatile int isOn = 0;
-// volatile uint32_t last_press_time = 0;
-
 
 // //Interrupt sub-routine:
 // //when button in PD2 is pressed
@@ -35,6 +33,14 @@
 
 // int main(void) {
 
+//   //Steps for using interrups:
+//   //1. Enable Interrupts ports as inputs (for external interrups)
+//   //2. Enable interrups sense control (falling edge vs rising edge) for triggering ISR
+//   //3. Enable - external interrupt mask register for external interrups
+//   //4. Enable gloabal interrupt - sei()
+
+
+
 //   //Interrupts: PD2 and PD3
 //   //Make them inputs
 //   DDRD &= 0b11110011;
@@ -57,15 +63,11 @@
 
 //   while(1) 
 //   {
-
 //     //blink LED in PD4:
 //     PORTD |= (1 << PD4);
 //     _delay_ms(2000);
 //     PORTD &= ~(1 << PD4);
 //     _delay_ms(2000);
-
-
-
 //   }
 
 //   return 0;
