@@ -14,6 +14,7 @@ ISR(USART_RX_vect) {
     volatile static uint16_t rx_write_pos = 0;
 
     rx_buffer[rx_write_pos] = UDR0; //clearas rx interrupt flag
+
     rx_count++;
     rx_write_pos++;
 
@@ -76,8 +77,8 @@ void usart_send_array(uint8_t *c, uint16_t len) {
     }
 }
 
-void usart_send_string(uint8_t *str) {
-    while(*str) {usart_send_byte(*str++);}
+void usart_send_string(const char *str) {
+    while(*str) {usart_send_byte((uint8_t)*str++);}
 }
 
 void usart_send_int(uint16_t num) {
