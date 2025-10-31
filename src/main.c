@@ -7,6 +7,7 @@
 #include "USART.h"
 #include "ADC.h"
 #include "TIMER.h"
+#include "PWM.h"
 
 
 int main(void) {
@@ -16,6 +17,7 @@ int main(void) {
   USART_INIT(9600);
   ADC_START();
   millis_init();
+  PWM_init();
   sei();
 
   usart_send_string(start);
@@ -42,6 +44,10 @@ int main(void) {
 
   uint32_t interval = 0;
 
+  uint16_t brightness = 0;
+
+  static uint8_t ledState = 0;
+
   while(1) {
 
     potVal0 = ADC_read(1);
@@ -55,28 +61,37 @@ int main(void) {
 
     uint32_t now = millis();
 
-    // if(now - previous_tx >= 1000) {
-    //   previous_tx = now;
+    if(now - previous_tx >= 1000) {
+      previous_tx = now;
 
-    //   usart_send_string("Pot value 0: "); usart_send_int(potVal0); usart_send_byte('\n');
-    //   usart_send_string("Pot value 1: "); usart_send_int(potVal1); usart_send_byte('\n');
+      usart_send_string("Pot value 0: "); usart_send_int(potVal0); usart_send_byte('\n');
+      usart_send_string("Pot value 1: "); usart_send_int(potVal1); usart_send_byte('\n');
 
-    // }
-
-    interval = 5UL * (uint32_t)potVal1; 
-    if (potVal1 <= 50) interval = 50;  // safety
-    if(potVal1 >= 1010) interval = 5000;
-
-    now = millis();
-
-    if(now - previous >= interval) {
-
-      previous = now;
-      
-      //toggle LED:
-      PORTB ^= (1 << PB1);
     }
 
+    interval = potVal1; 
+    if (potVal1 <= 50) interval = 0;  // safety
+    if(potVal1 >= 1000) interval = 1000;
+
+    now = millis();
+    brightness = potVal1;
+    // if(now - previous >= interval) {
+
+    //   //toggle LED:
+    //   if(ledState == 1) {
+    //     LED_brightness(0);
+    //   } else {
+    //     LED_brightness(brightness);
+    //   }
+
+    //   ledState = !ledState;
+
+    //   previous = now;
+    // }
+
+  LED_brightness(brightness);   
+
+    
     now = millis();
     if(now - lastLight >= 50) {
       if(!(PIND & (1 << PD7))) {
@@ -85,6 +100,8 @@ int main(void) {
             PORTB &= ~(1 << PB0);
           }
     }
+
+    
     
 
   }
